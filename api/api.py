@@ -47,9 +47,9 @@ def add_recipe():
     title=data['title'],
     ingredients=data['ingredients'],
     instructions=data['instructions'],
-    servings=data['servings'],
     description=data['description'],
-    image_url=data['image_url']
+    image_url=data['image_url'],
+    servings=data['servings']
   )
 
   required_fields = ['title', 'ingredients', 'instructions', 'servings', 'description', 'image_url']
@@ -65,14 +65,14 @@ def add_recipe():
     'title': new_recipe.title,
     'ingredients': new_recipe.ingredients,
     'instructions': new_recipe.instructions,
-    'servings': new_recipe.servings,
     'description': new_recipe.description,
-    'image_url': new_recipe.image_url
+    'image_url': new_recipe.image_url,
+    'servings': new_recipe.servings
    }
 
   return jsonify({'message': 'Recipe added successfully', 'recipe': new_recipe_data})
 
-@app.route('/api/recipes/<int:recipe_id>", methods=['PUT'])
+@app.route('/api/recipes/<int:recipe_id>', methods=['PUT'])
 def update_recipe(recipe_id):
   recipe = Recipe.query.get(recipe_id)
   if not recipe:
@@ -88,9 +88,9 @@ def update_recipe(recipe_id):
   recipe.title = data['title']
   recipe.ingredients = data['ingredients']
   recipe.instructions = data['instructions']
-  recipe.servings = data['servings']
   recipe.description = data['description']
   recipe.image_url = data['image_url']
+  recipe.servings = data['servings']
 
   db.session.commit()
   
@@ -99,9 +99,9 @@ def update_recipe(recipe_id):
     'title': recipe.title,
     'ingredients': recipe.ingredients,
     'instructions': recipe.instructions,
-    'servings': recipe.servings,
     'description': recipe.description,
-    'image_url': recipe.image_url
+    'image_url': recipe.image_url,
+    'servings': recipe.servings
   }
 
   return jsonify({'message': 'Recipe updated successfully', 'recipe': updated_recipe})
