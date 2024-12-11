@@ -176,17 +176,24 @@ function App() {
     return searchResults;
   };
 
+  const displayAllRecipes = () => {
+    hideRecipeForm();
+    handleUnselectRecipe();
+    updateSearchTerm("");
+  };
+
   const displayedRecipes = searchTerm ? handleSearch() : recipes;
 
   return (
     <div className="recipe-app">
-      <Header showRecipeForm={showRecipeForm} updateSearchTerm={updateSearchTerm} searchTerm={searchTerm} />
+      <Header showRecipeForm={showRecipeForm} updateSearchTerm={updateSearchTerm} searchTerm={searchTerm} displayAllRecipes={displayAllRecipes} />
       {showNewRecipeForm && (
         <NewRecipeForm
           newRecipe={newRecipe}
           hideRecipeForm={hideRecipeForm}
           onUpdateForm={onUpdateForm}
           handleNewRecipe={handleNewRecipe}
+          displayAllRecipes={displayAllRecipes}
         />
       )}
       {selectedRecipe && (
