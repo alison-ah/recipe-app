@@ -1,13 +1,13 @@
 import React from "react";
 
-const NewRecipeForm = ({ newRecipe, hideRecipeForm, onUpdateForm }) => { 
+const NewRecipeForm = ({ newRecipe, hideRecipeForm, onUpdateForm, handleNewRecipe }) => { 
   return (
 <div className='recipe-details'>
       <div className='recipe-form'>
         <h2>New Recipe</h2>
         <button className='cancel-button' onClick={hideRecipeForm}>Cancel</button>
  
-        <form>
+        <form onSubmit={(e) => handleNewRecipe(e, newRecipe)}>
           <label>Title</label>
           <input type='text' name='title' value={newRecipe.title} onChange={(e) => onUpdateForm(e)} required />
  
