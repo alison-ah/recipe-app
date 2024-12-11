@@ -2,7 +2,7 @@ import React from "react";
 
 const NewRecipeForm = ({ newRecipe, hideRecipeForm, onUpdateForm, handleNewRecipe }) => { 
   return (
-<div className='recipe-details'>
+    <div className='recipe-details'>
       <div className='recipe-form'>
         <h2>New Recipe</h2>
         <button className='cancel-button' onClick={hideRecipeForm}>Cancel</button>
@@ -15,7 +15,7 @@ const NewRecipeForm = ({ newRecipe, hideRecipeForm, onUpdateForm, handleNewRecip
           <textarea
             name='ingredients'
             value={newRecipe.ingredients}
-            onChange={(e) => onUpdateForm(e)}
+            onChange={(e) => onUpdateForm(e, "new")}
             required
             placeholder='Add ingredients separated by commas - i.e. Flour, sugar, almonds'
           />

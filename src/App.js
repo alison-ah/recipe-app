@@ -2,12 +2,14 @@ import React, {useState, useEffect} from "react";
 import Header from "./components/Header";
 import RecipeExcerpt from "./components/RecipeExcerpt";
 import RecipeFull from "./components/RecipeFull";
-import "./App.css";
 import NewRecipeForm from "./components/NewRecipeForm";
+import "./App.css";
 
 function App() {
   const [recipes, setRecipes] = useState([])
   const [selectedRecipe, setSelectedRecipe] = useState(null)
+  const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
+
   const [newRecipe, setNewRecipe] = useState({
       title: "",
       ingredients: "",
@@ -15,8 +17,7 @@ function App() {
       servings: 1, // conservative default
       description: "",
       image_url: "https://images.pexels.com/photos/9986228/pexels-photo-9986228.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" //default
-});
-const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
+  });
 
   useEffect(() => {
     const fetchAllRecipes = async () => {
@@ -42,7 +43,7 @@ const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
       const response = await fetch("/api/recipes", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(newRecipe)
       });
@@ -72,17 +73,49 @@ const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
     }
   };
 
-  const onUpdateForm = (e) => {
-    const { name, value } =e.target;
-    setNewRecipe({...newRecipe, [name]: value});
-  }
+  const handleUpdateRecipe = async (e, selectedRecipe) => {
+    e.preventDefault();
+    const {id} = selectedRecipe;
+
+    try {
+      const response = await fetch(`/api/recipes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(selectedRecipe),
+      });
+
+      if (response.ok){
+        const data = await response.json();
+
+        setRecipes(
+          recipes.map((recipe) => {
+            if (recipe.id === id) {
+              return data.recipe
+            }
+            return recipe
+          })
+        );
+
+        console.log("Recipe updated!");
+
+      } else {
+        console.error("Oops - failed to update recipe. Try again!")
+      }
+    } catch (e) {
+      console.log("An error occured during the request: ", e);
+    }
+
+    setSelectedRecipe(null);
+  };
 
   const handleSelectRecipe = (recipe) => {
-    setSelectedRecipe(recipe)
+    setSelectedRecipe(recipe);
   };
 
   const handleUnselectRecipe = () => {
-    setSelectedRecipe(null)
+    setSelectedRecipe(null);
   };
 
   const hideRecipeForm = () => {
@@ -92,6 +125,18 @@ const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
   const showRecipeForm = () => {
     setShowNewRecipeForm(true);
     setSelectedRecipe(null);
+  };
+
+  const onUpdateForm = (e, action = "new") => {
+    const { name, value } =e.target;
+    if (action === "update") {
+      setSelectedRecipe({
+        ...selectedRecipe,
+        [name]: value
+      })
+    } else if (action === "new") {
+      setNewRecipe({ ...newRecipe, [name]: value});
+    }
   };
 
   return (
@@ -105,13 +150,15 @@ const [showNewRecipeForm, setShowNewRecipeForm] = useState(false);
           handleNewRecipe={handleNewRecipe}
         />
       )}
-      {selectedRecipe && 
+      {selectedRecipe && (
         <RecipeFull 
-          selectedRecipe={selectedRecipe} 
+          handleUpdateRecipe={handleUpdateRecipe}
+          selectedRecipe={selectedRecipe}
+          onUpdateForm={onUpdateForm} 
           handleUnselectRecipe={handleUnselectRecipe} 
           />
-        }
-      {!selectedRecipe && (
+      )}
+      {!selectedRecipe && !showNewRecipeForm && (
         <div className='recipe-list'>
           {recipes.map((recipe) => (
             <RecipeExcerpt 
