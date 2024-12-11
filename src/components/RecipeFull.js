@@ -1,19 +1,39 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import EditRecipeForm from "./EditRecipeForm";
+import ConfirmationModal from "./ConfirmationModal";
 import { X } from "react-feather";
 
-const RecipeFull = ({ selectedRecipe, handleUnselectRecipe, onUpdateForm, handleUpdateRecipe }) => {
-  const[editing, setEditing] = useState(false);
+const RecipeFull = ({
+  selectedRecipe,
+  handleUnselectRecipe,
+  onUpdateForm,
+  handleUpdateRecipe,
+  handleDeleteRecipe,
+}) => {
+  const [editing, setEditing] = useState(false);
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   const handleCancel = () => {
     setEditing(false);
   };
 
+  if (showConfirmationModal) {
+    return (
+      <div className="recipe-dtails">
+        <ConfirmationModal 
+          message="Are you sure? Once it's gone, it's gone." 
+          onCancel={() => setShowConfirmationModal(false)} 
+          onConfirm={() => handleDeleteRecipe(selectedRecipe.id)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="recipe-details">
       {editing ? (
-        <EditRecipeForm 
-          selectedRecipe={selectedRecipe} 
+        <EditRecipeForm
+          selectedRecipe={selectedRecipe}
           onUpdateForm={onUpdateForm}
           handleCancel={handleCancel}
           handleUpdateRecipe={handleUpdateRecipe}
@@ -26,11 +46,13 @@ const RecipeFull = ({ selectedRecipe, handleUnselectRecipe, onUpdateForm, handle
             </figure>
             <h2>{selectedRecipe.title}</h2>
             <div className="button-container">
-              <button className="edit-button" onClick={() => setEditing(true)}>Edit</button>
+              <button className="edit-button" onClick={() => setEditing(true)}>
+                Edit
+              </button>
               <button className="cancel-button" onClick={handleUnselectRecipe}>
                 <X /> Close
               </button>
-              <button className="delete-button">Delete</button>
+              <button className="delete-button" onClick={() => setShowConfirmationModal(true)}>Delete</button>
             </div>
           </header>
 
@@ -52,8 +74,7 @@ const RecipeFull = ({ selectedRecipe, handleUnselectRecipe, onUpdateForm, handle
 
           <h3>Servings: {selectedRecipe.servings}</h3>
         </article>
-     )}
-      
+      )}
     </div>
   );
 };
